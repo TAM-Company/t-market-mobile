@@ -4,6 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -64,12 +65,40 @@ export default function CartScreen() {
               contentContainerStyle={styles.listContainer}
             />
             <View style={styles.summaryContainer}>
+              <View style={styles.promoContainer}>
+                <TextInput
+                  style={styles.promoInput}
+                  placeholder="Code promo"
+                  placeholderTextColor="#999"
+                />
+                <TouchableOpacity style={styles.promoButton}>
+                  <Text style={styles.promoButtonText}>Appliquer</Text>
+                </TouchableOpacity>
+              </View>
+
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Total</Text>
+                <Text style={styles.summaryLabel}>Sous-total</Text>
                 <Text style={styles.summaryValue}>
-                  {getCartTotal().toFixed(2)} €
+                  {getCartTotal().toFixed(2)} FCFA
                 </Text>
               </View>
+
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Réduction</Text>
+                <Text style={styles.discountValue}>0.00 FCFA</Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, styles.totalLabel]}>
+                  Total
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {getCartTotal().toFixed(2)} FCFA
+                </Text>
+              </View>
+
               <View style={styles.buttonsContainer}>
                 <TouchableOpacity
                   style={styles.clearButton}
@@ -137,6 +166,37 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  promoContainer: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+  promoInput: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+  },
+  promoButton: {
+    backgroundColor: "#FF2A2A",
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginLeft: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  promoButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginVertical: 10,
+  },
   summaryRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -146,10 +206,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  totalLabel: {
+    fontWeight: "bold",
+  },
   summaryValue: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#FF2A2A",
+  },
+  discountValue: {
+    fontSize: 16,
+    color: "#4CAF50",
+    fontWeight: "600",
   },
   buttonsContainer: {
     flexDirection: "row",

@@ -83,9 +83,7 @@ export default function CartScreen() {
 
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Sous-total</Text>
-                  <Text style={styles.summaryValue}>
-                    {getCartTotal().toFixed(2)} FCFA
-                  </Text>
+                  <Text style={styles.summaryValue}>{getCartTotal()} FCFA</Text>
                 </View>
 
                 <View style={styles.summaryRow}>

@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,34 +10,41 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "../../src/components/Header";
+import { ProductCard } from "../../src/components/ProductCard";
+import { useCart } from "../../src/context/CartContext";
 import {
-  categories,
-  getSubCategoriesByCategory,
+  getProductsBySubCategory,
+  getSubCategoryById,
 } from "../../src/data/mockData";
-import { SubCategory } from "../../src/types";
+import { Product, SubCategory } from "../../src/types";
 
-export default function CategoryScreen() {
+export default function SubCategoryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
-  const category = categories.find((cat) => cat.id === id);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [subCategory, setSubCategory] = useState<SubCategory | undefined>();
 
   useEffect(() => {
     if (id) {
-      const categorySubCategories = getSubCategoriesByCategory(id);
-      setSubCategories(categorySubCategories);
+      const foundSubCategory = getSubCategoryById(id);
+      setSubCategory(foundSubCategory);
+
+      const subCategoryProducts = getProductsBySubCategory(id);
+      setProducts(subCategoryProducts);
     }
   }, [id]);
 
-  const handleSubCategoryPress = (subCategoryId: string) => {
-    router.push(`/subcategory/${subCategoryId}`);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product, 1);
   };
 
-  if (!category) {
+  if (!subCategory) {
     return (
       <View style={styles.notFoundContainer}>
         <Ionicons name="alert-circle-outline" size={64} color="#ccc" />
-        <Text style={styles.notFoundText}>Catégorie non trouvée</Text>
+        <Text style={styles.notFoundText}>Sous-catégorie non trouvée</Text>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
@@ -55,34 +61,29 @@ export default function CategoryScreen() {
         flex: 1,
       }}
     >
-      <Header title={category.name} showBackButton showCartButton />
+      <Header title={subCategory.name} showBackButton showCartButton />
 
-      {subCategories.length === 0 ? (
+      {products.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="cube-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyText}>Aucune sous-catégorie disponible</Text>
+          <Text style={styles.emptyText}>
+            Aucun produit dans cette sous-catégorie
+          </Text>
         </View>
       ) : (
         <FlatList
-          data={subCategories}
+          data={products}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.subCategoryItem}
-              onPress={() => handleSubCategoryPress(item.id)}
-            >
-              <Image
-                source={{ uri: item.image }}
-                style={styles.subCategoryImage}
+            <View style={styles.productCardContainer}>
+              <ProductCard
+                product={item}
+                onAddToCart={() => handleAddToCart(item)}
               />
-              <View style={styles.subCategoryContent}>
-                <Text style={styles.subCategoryName}>{item.name}</Text>
-              </View>
-              <View style={styles.arrowContainer}>
-                <Ionicons name="chevron-forward" size={24} color="#888" />
-              </View>
-            </TouchableOpacity>
+            </View>
           )}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
           contentContainerStyle={styles.listContent}
         />
       )}
@@ -96,38 +97,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
   },
   listContent: {
-    padding: 16,
+    padding: 8,
   },
-  subCategoryItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
+  columnWrapper: {
+    justifyContent: "space-between",
+  },
+  productCardContainer: {
+    width: "48%",
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    overflow: "hidden",
-  },
-  subCategoryImage: {
-    width: 80,
-    height: 80,
-    resizeMode: "cover",
-  },
-  subCategoryContent: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  subCategoryName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  arrowContainer: {
-    paddingRight: 16,
   },
   emptyContainer: {
     flex: 1,

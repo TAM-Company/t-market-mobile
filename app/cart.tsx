@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,59 +10,41 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CartItem as CartItemComponent } from "../src/components/CartItem";
-import { products } from "../src/data/mockData";
+import { Header } from "../src/components/Header";
+import { useCart } from "../src/context/CartContext";
 import { CartItem } from "../src/types";
 
-// Données fictives pour le panier
-const initialCartItems: CartItem[] = [
-  { product: products[0], quantity: 2 },
-  { product: products[3], quantity: 1 },
-];
-
 export default function CartScreen() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
+  const router = useRouter();
 
   const calculateSubtotal = (item: CartItem) => {
     return item.product.price * item.quantity;
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + calculateSubtotal(item),
-      0
-    );
-  };
-
   const handleIncrement = (productId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.product.id === productId && item.quantity < item.product.stock
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
+    const item = cartItems.find((item) => item.product.id === productId);
+    if (item && item.quantity < item.product.stock) {
+      updateQuantity(productId, item.quantity + 1);
+    }
   };
 
   const handleDecrement = (productId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.product.id === productId && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
+    const item = cartItems.find((item) => item.product.id === productId);
+    if (item && item.quantity > 1) {
+      updateQuantity(productId, item.quantity - 1);
+    }
   };
 
   const handleRemove = (productId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.product.id !== productId)
-    );
+    removeFromCart(productId);
   };
 
   const handleCheckout = () => {
     // Simuler un processus de paiement
     alert("Commande validée ! Merci pour votre achat.");
-    setCartItems([]);
+    // Vider le panier après la commande
+    cartItems.forEach((item) => removeFromCart(item.product.id));
   };
 
   return (
@@ -70,6 +53,7 @@ export default function CartScreen() {
         flex: 1,
       }}
     >
+      <Header title="Mon Panier" showBackButton />
       <View style={styles.container}>
         {cartItems.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -100,7 +84,7 @@ export default function CartScreen() {
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Sous-total</Text>
                   <Text style={styles.summaryValue}>
-                    {calculateTotal().toFixed(2)} €
+                    {getCartTotal().toFixed(2)} FCFA
                   </Text>
                 </View>
 
@@ -109,10 +93,12 @@ export default function CartScreen() {
                   <Text style={styles.summaryValue}>Gratuite</Text>
                 </View>
 
-                <View style={[styles.summaryRow, styles.totalRow]}>
+                <View style={styles.divider} />
+
+                <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>Total</Text>
                   <Text style={styles.totalValue}>
-                    {calculateTotal().toFixed(2)} €
+                    {getCartTotal().toFixed(2)} FCFA
                   </Text>
                 </View>
               </View>
@@ -139,6 +125,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8f8f8",
+  },
+  header: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
   scrollContainer: {
     flex: 1,
@@ -174,12 +173,16 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginVertical: 12,
   },
   totalRow: {
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    paddingTop: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 4,
   },
   totalLabel: {
@@ -195,12 +198,12 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
+    borderTopColor: "#eee",
   },
   checkoutButton: {
     backgroundColor: "#FF2A2A",
     borderRadius: 8,
-    paddingVertical: 16,
+    padding: 16,
     alignItems: "center",
   },
   checkoutButtonText: {

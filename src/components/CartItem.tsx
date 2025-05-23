@@ -29,7 +29,7 @@ export const CartItem: React.FC<CartItemProps> = ({
         <Text style={styles.name} numberOfLines={2}>
           {product.name}
         </Text>
-        <Text style={styles.price}>{product.price.toFixed(2)} €</Text>
+        <Text style={styles.price}>{product.price.toFixed(2)} FCFA</Text>
         <View style={styles.quantityContainer}>
           <TouchableOpacity
             style={styles.quantityButton}
@@ -52,7 +52,7 @@ export const CartItem: React.FC<CartItemProps> = ({
         <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
           <Text style={styles.removeButtonText}>×</Text>
         </TouchableOpacity>
-        <Text style={styles.subtotal}>{subtotal.toFixed(2)} €</Text>
+        <Text style={styles.subtotal}>{subtotal.toFixed(2)} FCFA</Text>
       </View>
     </View>
   );

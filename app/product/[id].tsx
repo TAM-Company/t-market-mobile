@@ -11,6 +11,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Header } from "../../src/components/Header";
+import { useCart } from "../../src/context/CartContext";
 import { getProductById } from "../../src/data/mockData";
 
 const { width } = Dimensions.get("window");
@@ -21,6 +23,7 @@ export default function ProductDetailScreen() {
   const product = getProductById(id);
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { addToCart } = useCart();
 
   if (!product) {
     return (
@@ -50,8 +53,10 @@ export default function ProductDetailScreen() {
   };
 
   const handleAddToCart = () => {
-    // Cette fonction sera implémentée avec un contexte global
-    console.log(`Ajouter au panier: ${product.name}, quantité: ${quantity}`);
+    // Utiliser le contexte du panier pour ajouter le produit
+    addToCart(product, quantity);
+    // Afficher une confirmation et rediriger vers le panier
+    alert(`${product.name} ajouté au panier`);
     router.push("/cart");
   };
 
@@ -63,19 +68,8 @@ export default function ProductDetailScreen() {
     >
       <View style={styles.container}>
         <ScrollView>
-          {/* En-tête avec bouton retour */}
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.backIconButton}
-              onPress={() => router.back()}
-            >
-              <Ionicons name="arrow-back" size={24} color="#333" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              {product.name}
-            </Text>
-            <View style={{ width: 24 }} />
-          </View>
+          {/* Utiliser le composant Header */}
+          <Header title={product.name} showBackButton showCartButton />
 
           {/* Carousel d'images */}
           <View style={styles.imageContainer}>
@@ -117,7 +111,7 @@ export default function ProductDetailScreen() {
           <View style={styles.infoContainer}>
             <Text style={styles.productName}>{product.name}</Text>
             <Text style={styles.productPrice}>
-              {product.price.toFixed(2)} €
+              {product.price.toFixed(2)} FCFA
             </Text>
             <View style={styles.stockInfo}>
               <Text
@@ -227,7 +221,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width,
-    height: 300,
+    height: 350,
     backgroundColor: "#f0f0f0",
   },
   paginationContainer: {

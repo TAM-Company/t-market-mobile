@@ -9,4 +9,5 @@ export * from "./FilterModal";
 export * from "./Header";
 export * from "./Input";
 export * from "./Loader";
+export * from "./OrderHistory";
 export * from "./ProductCard";

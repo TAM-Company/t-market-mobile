@@ -9,11 +9,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FilterModal } from "../src/components/FilterModal";
-import { ProductCard } from "../src/components/ProductCard";
-import { useCart } from "../src/context/CartContext";
-import { filterProducts, products } from "../src/data/mockData";
-import { FilterOptions, Product } from "../src/types";
+import { FilterModal } from "../../src/components/FilterModal";
+import { ProductCard } from "../../src/components/ProductCard";
+import { useCart } from "../../src/context/CartContext";
+import { filterProducts, products } from "../../src/data/mockData";
+import { FilterOptions, Product } from "../../src/types";
 
 export default function ProductsScreen() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
@@ -26,6 +26,8 @@ export default function ProductsScreen() {
     maxPrice: null,
     inStock: false,
   });
+
+  const { addToCart } = useCart();
 
   useEffect(() => {
     // Appliquer les filtres
@@ -51,8 +53,6 @@ export default function ProductsScreen() {
   const handleApplyFilters = (newFilters: FilterOptions) => {
     setFilters(newFilters);
   };
-
-  const { addToCart } = useCart();
 
   const handleAddToCart = (product: Product) => {
     addToCart(product, 1);
@@ -108,9 +108,7 @@ export default function ProductsScreen() {
                 setSearchQuery("");
               }}
             >
-              <Text style={styles.resetButtonText}>
-                Réinitialiser les filtres
-              </Text>
+              <Text style={styles.resetButtonText}>Réinitialiser</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -130,16 +128,16 @@ export default function ProductsScreen() {
             contentContainerStyle={styles.listContent}
           />
         )}
-
-        <FilterModal
-          visible={isFilterModalVisible}
-          currentFilters={filters}
-          initialFilters={filters}
-          onApply={handleApplyFilters}
-          onApplyFilters={handleApplyFilters}
-          onClose={() => setIsFilterModalVisible(false)}
-        />
       </View>
+
+      <FilterModal
+        visible={isFilterModalVisible}
+        currentFilters={filters}
+        initialFilters={filters}
+        onApply={handleApplyFilters}
+        onApplyFilters={handleApplyFilters}
+        onClose={() => setIsFilterModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -154,7 +152,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#eee",
   },
   searchInputContainer: {
     flex: 1,
@@ -162,8 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 12,
+    paddingHorizontal: 10,
   },
   searchIcon: {
     marginRight: 8,
@@ -174,12 +171,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   filterButton: {
-    width: 40,
-    height: 40,
+    marginLeft: 12,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
   },
   listContent: {
     padding: 8,
@@ -188,7 +182,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productCardContainer: {
-    width: "48%",
+    width: "48.5%",
     marginBottom: 16,
   },
   emptyContainer: {
@@ -201,21 +195,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 16,
+    color: "#333",
   },
   emptySubtext: {
     fontSize: 14,
     color: "#666",
     marginTop: 8,
-    marginBottom: 24,
+    textAlign: "center",
   },
   resetButton: {
+    marginTop: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     backgroundColor: "#FF2A2A",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
     borderRadius: 8,
   },
   resetButtonText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: "bold",
   },
 });

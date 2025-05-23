@@ -10,8 +10,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { products as initialProducts } from "../src/data/mockData";
-import { Product } from "../src/types";
+import { products as initialProducts } from "../../src/data/mockData";
+import { Product } from "../../src/types";
 
 export default function InventoryScreen() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -101,9 +101,8 @@ export default function InventoryScreen() {
       }}
     >
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>Gestion de Stock</Text>
-          <Text style={styles.headerSubtitle}>{products.length} produits</Text>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Gestion du stock</Text>
         </View>
 
         <FlatList
@@ -111,7 +110,6 @@ export default function InventoryScreen() {
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>
     </SafeAreaView>
@@ -123,39 +121,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f8f8",
   },
-  headerContainer: {
+  header: {
     backgroundColor: "#fff",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#eee",
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 4,
+    color: "#333",
   },
   listContent: {
     padding: 16,
   },
   productItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   productInfo: {
     flex: 1,
-    marginRight: 16,
   },
   productName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 4,
   },
   productCategory: {
@@ -164,13 +162,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   productPrice: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 14,
     color: "#FF2A2A",
+    fontWeight: "bold",
   },
   stockContainer: {
+    justifyContent: "center",
+    alignItems: "center",
     minWidth: 80,
-    alignItems: "flex-end",
   },
   stockDisplay: {
     flexDirection: "row",
@@ -179,10 +178,11 @@ const styles = StyleSheet.create({
   stockText: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
     marginRight: 8,
   },
   outOfStock: {
-    color: "#F44336",
+    color: "#FF2A2A",
   },
   editButton: {
     padding: 4,
@@ -192,20 +192,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stockInput: {
+    width: 50,
+    height: 36,
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 4,
-    padding: 4,
-    width: 60,
-    textAlign: "center",
+    paddingHorizontal: 8,
     marginRight: 8,
+    textAlign: "center",
   },
   saveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#FF2A2A",
     borderRadius: 4,
-    padding: 4,
-  },
-  separator: {
-    height: 12,
+    padding: 6,
   },
 });

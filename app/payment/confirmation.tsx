@@ -62,7 +62,7 @@ export default function PaymentConfirmationScreen() {
 
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Montant:</Text>
-            <Text style={styles.detailValue}>{amount || "0.00"} €</Text>
+            <Text style={styles.detailValue}>{amount || "0.00"} FCFA</Text>
           </View>
 
           {phone && (

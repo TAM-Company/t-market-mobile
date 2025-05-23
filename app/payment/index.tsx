@@ -82,6 +82,33 @@ export default function PaymentMethodsScreen() {
           Choisissez votre méthode de paiement
         </Text>
 
+        <View style={styles.paymentInfoCard}>
+          <Text style={styles.infoTitle}>Moyens de paiement disponibles</Text>
+          <Text style={styles.infoText}>
+            Nous proposons plusieurs moyens de paiement mobile adaptés au marché
+            local pour faciliter vos transactions.
+          </Text>
+
+          <View style={styles.infoItem}>
+            <Ionicons name="phone-portrait" size={20} color="#FF2A2A" />
+            <Text style={styles.infoItemText}>
+              Paiement mobile rapide et sécurisé
+            </Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Ionicons name="shield-checkmark" size={20} color="#FF2A2A" />
+            <Text style={styles.infoItemText}>
+              Transactions protégées et cryptées
+            </Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Ionicons name="cash" size={20} color="#FF2A2A" />
+            <Text style={styles.infoItemText}>
+              Option de paiement à la livraison disponible
+            </Text>
+          </View>
+        </View>
+
         {paymentMethods.map((method) => (
           <TouchableOpacity
             key={method.id}
@@ -140,6 +167,39 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 16,
+  },
+  paymentInfoCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: "#333",
+  },
+  infoText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  infoItemText: {
+    fontSize: 14,
+    color: "#444",
+    marginLeft: 10,
   },
   paymentMethodCard: {
     flexDirection: "row",

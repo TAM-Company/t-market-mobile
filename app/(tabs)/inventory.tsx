@@ -102,7 +102,7 @@ export default function InventoryScreen() {
     >
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Gestion du stock</Text>
+          <Text style={styles.headerTitle}>Gestion des produits</Text>
         </View>
 
         <FlatList

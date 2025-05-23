@@ -309,7 +309,7 @@ export const products: Product[] = [
     name: "Smartphone XYZ",
     description:
       "Un smartphone puissant avec une excellente caméra et une batterie longue durée.",
-    price: 459000,
+    price: 67000,
     stock: 15,
     category: "1",
     images: [
@@ -335,7 +335,7 @@ export const products: Product[] = [
     name: "Ordinateur Portable Pro",
     description:
       "Ordinateur portable professionnel avec des performances exceptionnelles pour tous vos besoins.",
-    price: 852000,
+    price: 85000,
     stock: 8,
     category: "1",
     images: [
@@ -360,7 +360,7 @@ export const products: Product[] = [
     name: "T-shirt Premium",
     description:
       "T-shirt de haute qualité en coton bio, confortable et durable.",
-    price: 19700,
+    price: 25000,
     stock: 50,
     category: "2",
     images: [
@@ -384,7 +384,7 @@ export const products: Product[] = [
     name: "Canapé Moderne",
     description:
       "Canapé moderne et élégant pour votre salon, alliant confort et style.",
-    price: 590000,
+    price: 12000,
     stock: 5,
     category: "3",
     images: [
@@ -433,7 +433,7 @@ export const products: Product[] = [
     name: "Crème Hydratante Visage",
     description:
       "Crème hydratante pour tous types de peau, enrichie en vitamines et antioxydants.",
-    price: 16500,
+    price: 15000,
     stock: 25,
     category: "5",
     images: [
@@ -481,7 +481,7 @@ export const products: Product[] = [
     name: "Veste en Cuir",
     description:
       "Veste en cuir véritable, élégante et durable pour homme et femme.",
-    price: 199.99,
+    price: 19800,
     stock: 7,
     category: "2",
     images: [

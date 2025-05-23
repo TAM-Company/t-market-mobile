@@ -30,7 +30,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <Text style={styles.name} numberOfLines={1}>
           {product.name}
         </Text>
-        <Text style={styles.price}>{product.price.toFixed(2)} FCFA</Text>
+        <Text style={styles.price}>{product.price} FCFA</Text>
         <View style={styles.stockContainer}>
           <Text
             style={[

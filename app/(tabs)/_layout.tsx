@@ -65,7 +65,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="inventory"
         options={{
-          title: "Stock",
+          title: "Produits",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cube-outline" size={size} color={color} />
           ),

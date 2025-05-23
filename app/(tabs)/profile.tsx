@@ -35,12 +35,20 @@ interface Order {
   total: number;
   status: string;
   items: number;
+  trackingSteps?: {
+    title: string;
+    date: string;
+    completed: boolean;
+  }[];
 }
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("personal");
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+  const [trackingModalVisible, setTrackingModalVisible] =
+    useState<boolean>(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [editField, setEditField] = useState<string>("");
   const [editValue, setEditValue] = useState<string>("");
 
@@ -93,6 +101,17 @@ export default function ProfileScreen() {
       total: 125.99,
       status: "Livrée",
       items: 3,
+      trackingSteps: [
+        {
+          title: "Commande confirmée",
+          date: "15/05/2023 08:30",
+          completed: true,
+        },
+        { title: "En préparation", date: "15/05/2023 09:45", completed: true },
+        { title: "Expédiée", date: "15/05/2023 14:20", completed: true },
+        { title: "En livraison", date: "15/05/2023 16:30", completed: true },
+        { title: "Livrée", date: "15/05/2023 18:15", completed: true },
+      ],
     },
     {
       id: "ORD-002",
@@ -100,6 +119,17 @@ export default function ProfileScreen() {
       total: 89.5,
       status: "En cours",
       items: 2,
+      trackingSteps: [
+        {
+          title: "Commande confirmée",
+          date: "02/06/2023 10:15",
+          completed: true,
+        },
+        { title: "En préparation", date: "02/06/2023 14:30", completed: true },
+        { title: "Expédiée", date: "03/06/2023 09:00", completed: true },
+        { title: "En livraison", date: "03/06/2023 14:45", completed: false },
+        { title: "Livrée", date: "", completed: false },
+      ],
     },
     {
       id: "ORD-003",
@@ -107,6 +137,17 @@ export default function ProfileScreen() {
       total: 210.75,
       status: "En préparation",
       items: 4,
+      trackingSteps: [
+        {
+          title: "Commande confirmée",
+          date: "18/06/2023 11:20",
+          completed: true,
+        },
+        { title: "En préparation", date: "18/06/2023 15:45", completed: true },
+        { title: "Expédiée", date: "", completed: false },
+        { title: "En livraison", date: "", completed: false },
+        { title: "Livrée", date: "", completed: false },
+      ],
     },
   ]);
 

@@ -29,17 +29,19 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
+interface TrackingStep {
+  title: string;
+  date: string | null;
+  completed: boolean;
+}
+
 interface Order {
   id: string;
   date: string;
   total: number;
   status: string;
   items: number;
-  trackingSteps?: {
-    title: string;
-    date: string;
-    completed: boolean;
-  }[];
+  trackingSteps: TrackingStep[];
 }
 
 export default function ProfileScreen() {
@@ -96,57 +98,105 @@ export default function ProfileScreen() {
   // Données fictives pour l'historique des commandes
   const [orders, setOrders] = useState<Order[]>([
     {
-      id: "ORD-001",
-      date: "15/05/2023",
-      total: 125.99,
-      status: "Livrée",
+      id: "CMD-001",
+      date: "15/04/2023",
       items: 3,
+      total: 89.97,
+      status: "Livrée",
       trackingSteps: [
         {
           title: "Commande confirmée",
-          date: "15/05/2023 08:30",
+          date: "15/04/2023 10:30",
           completed: true,
         },
-        { title: "En préparation", date: "15/05/2023 09:45", completed: true },
-        { title: "Expédiée", date: "15/05/2023 14:20", completed: true },
-        { title: "En livraison", date: "15/05/2023 16:30", completed: true },
-        { title: "Livrée", date: "15/05/2023 18:15", completed: true },
+        {
+          title: "En préparation",
+          date: "15/04/2023 14:45",
+          completed: true,
+        },
+        {
+          title: "Expédiée",
+          date: "16/04/2023 09:15",
+          completed: true,
+        },
+        {
+          title: "En transit",
+          date: "17/04/2023 11:20",
+          completed: true,
+        },
+        {
+          title: "Livrée",
+          date: "18/04/2023 14:30",
+          completed: true,
+        },
       ],
     },
     {
-      id: "ORD-002",
-      date: "02/06/2023",
-      total: 89.5,
+      id: "CMD-002",
+      date: "28/04/2023",
+      items: 1,
+      total: 29.99,
       status: "En cours",
-      items: 2,
       trackingSteps: [
         {
           title: "Commande confirmée",
-          date: "02/06/2023 10:15",
+          date: "28/04/2023 16:20",
           completed: true,
         },
-        { title: "En préparation", date: "02/06/2023 14:30", completed: true },
-        { title: "Expédiée", date: "03/06/2023 09:00", completed: true },
-        { title: "En livraison", date: "03/06/2023 14:45", completed: false },
-        { title: "Livrée", date: "", completed: false },
+        {
+          title: "En préparation",
+          date: "29/04/2023 09:45",
+          completed: true,
+        },
+        {
+          title: "Expédiée",
+          date: "30/04/2023 11:30",
+          completed: true,
+        },
+        {
+          title: "En transit",
+          date: null,
+          completed: false,
+        },
+        {
+          title: "Livrée",
+          date: null,
+          completed: false,
+        },
       ],
     },
     {
-      id: "ORD-003",
-      date: "18/06/2023",
-      total: 210.75,
-      status: "En préparation",
-      items: 4,
+      id: "CMD-003",
+      date: "05/05/2023",
+      items: 2,
+      total: 59.98,
+      status: "En attente",
       trackingSteps: [
         {
           title: "Commande confirmée",
-          date: "18/06/2023 11:20",
+          date: "05/05/2023 14:10",
           completed: true,
         },
-        { title: "En préparation", date: "18/06/2023 15:45", completed: true },
-        { title: "Expédiée", date: "", completed: false },
-        { title: "En livraison", date: "", completed: false },
-        { title: "Livrée", date: "", completed: false },
+        {
+          title: "En préparation",
+          date: null,
+          completed: false,
+        },
+        {
+          title: "Expédiée",
+          date: null,
+          completed: false,
+        },
+        {
+          title: "En transit",
+          date: null,
+          completed: false,
+        },
+        {
+          title: "Livrée",
+          date: null,
+          completed: false,
+        },
       ],
     },
   ]);
@@ -292,6 +342,11 @@ export default function ProfileScreen() {
     </View>
   );
 
+  const openTrackingModal = (order: Order) => {
+    setSelectedOrder(order);
+    setTrackingModalVisible(true);
+  };
+
   const renderOrders = () => (
     <View style={styles.sectionContainer}>
       {orders.map((order) => (
@@ -329,15 +384,25 @@ export default function ProfileScreen() {
             <View style={styles.orderDetail}>
               <Text style={styles.orderDetailLabel}>Total</Text>
               <Text style={styles.orderDetailValue}>
-                {order.total.toFixed(2)} €
+                {order.total.toFixed(2)} FCFA
               </Text>
             </View>
           </View>
 
-          <TouchableOpacity style={styles.viewOrderButton}>
-            <Text style={styles.viewOrderButtonText}>Voir les détails</Text>
-            <Ionicons name="chevron-forward" size={16} color="#FF2A2A" />
-          </TouchableOpacity>
+          <View style={styles.orderButtonsContainer}>
+            <TouchableOpacity
+              style={styles.trackingButton}
+              onPress={() => openTrackingModal(order)}
+            >
+              <Ionicons name="locate-outline" size={16} color="#2196F3" />
+              <Text style={styles.trackingButtonText}>Suivi</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.viewOrderButton}>
+              <Text style={styles.viewOrderButtonText}>Voir les détails</Text>
+              <Ionicons name="chevron-forward" size={16} color="#FF2A2A" />
+            </TouchableOpacity>
+          </View>
         </Card>
       ))}
     </View>
@@ -462,6 +527,74 @@ export default function ProfileScreen() {
                 <Text style={styles.modalSaveButtonText}>Enregistrer</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={trackingModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setTrackingModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContainer, styles.trackingModalContainer]}>
+            <View style={styles.trackingModalHeader}>
+              <Text style={styles.trackingModalTitle}>Suivi de commande</Text>
+              <TouchableOpacity onPress={() => setTrackingModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#555" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.trackingOrderId}>
+              Commande {selectedOrder?.id}
+            </Text>
+
+            <ScrollView style={styles.trackingStepsContainer}>
+              {selectedOrder?.trackingSteps?.map((step, index) => (
+                <View key={index} style={styles.trackingStep}>
+                  <View
+                    style={[
+                      styles.trackingStepIconContainer,
+                      step.completed
+                        ? styles.completedStepIcon
+                        : styles.pendingStepIcon,
+                    ]}
+                  >
+                    {step.completed ? (
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    ) : (
+                      <View style={styles.pendingStepDot} />
+                    )}
+                  </View>
+
+                  <View style={styles.trackingStepLine} />
+
+                  <View style={styles.trackingStepContent}>
+                    <Text
+                      style={[
+                        styles.trackingStepTitle,
+                        step.completed
+                          ? styles.completedStepTitle
+                          : styles.pendingStepTitle,
+                      ]}
+                    >
+                      {step.title}
+                    </Text>
+                    <Text style={styles.trackingStepDate}>
+                      {step.date || "En attente"}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.closeTrackingButton}
+              onPress={() => setTrackingModalVisible(false)}
+            >
+              <Text style={styles.closeTrackingButtonText}>Fermer</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -681,13 +814,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  orderButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+  },
+  trackingButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#E3F2FD",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  trackingButtonText: {
+    color: "#2196F3",
+    fontSize: 12,
+    fontWeight: "500",
+    marginLeft: 5,
+  },
   viewOrderButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
   },
   viewOrderButtonText: {
     fontSize: 14,
@@ -746,5 +898,100 @@ const styles = StyleSheet.create({
   modalSaveButtonText: {
     color: "#fff",
     fontWeight: "600",
+  },
+  trackingModalContainer: {
+    padding: 0,
+    paddingTop: 0,
+    borderRadius: 15,
+  },
+  trackingModalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  trackingModalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  trackingOrderId: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 15,
+    paddingHorizontal: 20,
+  },
+  trackingStepsContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    maxHeight: 400,
+  },
+  trackingStep: {
+    flexDirection: "row",
+    marginBottom: 25,
+    position: "relative",
+  },
+  trackingStepIconContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+    zIndex: 1,
+  },
+  completedStepIcon: {
+    backgroundColor: "#4CAF50",
+  },
+  pendingStepIcon: {
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#ddd",
+  },
+  pendingStepDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ddd",
+  },
+  trackingStepLine: {
+    position: "absolute",
+    left: 11,
+    top: 24,
+    bottom: -15,
+    width: 2,
+    backgroundColor: "#ddd",
+    zIndex: 0,
+  },
+  trackingStepContent: {
+    flex: 1,
+  },
+  trackingStepTitle: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  completedStepTitle: {
+    color: "#333",
+    fontWeight: "bold",
+  },
+  pendingStepTitle: {
+    color: "#999",
+  },
+  trackingStepDate: {
+    fontSize: 12,
+    color: "#888",
+  },
+  closeTrackingButton: {
+    backgroundColor: "#f5f5f5",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    margin: 20,
+  },
+  closeTrackingButtonText: {
+    color: "#333",
+    fontWeight: "bold",
   },
 });

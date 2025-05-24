@@ -96,7 +96,7 @@ export default function CartScreen() {
                 <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>Total</Text>
                   <Text style={styles.totalValue}>
-                    {getCartTotal().toFixed(2)} FCFA
+                    {getCartTotal()} FCFA
                   </Text>
                 </View>
               </View>

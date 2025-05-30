@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { categories } from "../data/mockData";
+import { categories } from "../data/mockData"; // Assuming this is still needed
 import { FilterOptions, SortOption } from "../types";
+import { useThemedStyles } from "../context/ThemeContext";
+import { Theme } from "../design/theme";
 
 interface FilterModalProps {
   visible: boolean;
@@ -28,6 +30,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   initialFilters,
   onApplyFilters,
 }) => {
+  const styles = useThemedStyles(createStyles);
   const [filters, setFilters] = useState<FilterOptions>(currentFilters);
   const [activeTab, setActiveTab] = useState<"filters" | "sort">("filters");
 
@@ -52,6 +55,10 @@ export const FilterModal: React.FC<FilterModalProps> = ({
       minPrice: null,
       maxPrice: null,
       inStock: false,
+      // Ensure all filter options are reset if new ones were added
+      onSale: false,
+      freeShipping: false,
+      sortBy: "default",
     };
     setFilters(resetFilters);
     onApplyFilters(resetFilters);
@@ -70,7 +77,11 @@ export const FilterModal: React.FC<FilterModalProps> = ({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Recherche avancée</Text>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={24} color="#333" />
+              <Ionicons
+                name="close"
+                size={24}
+                color={styles.closeIcon.color} // Updated
+              />
             </TouchableOpacity>
           </View>
 
@@ -112,12 +123,13 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     <Ionicons
                       name="search-outline"
                       size={20}
-                      color="#666"
+                      color={styles.searchIcon.color} // Updated
                       style={styles.searchIcon}
                     />
                     <TextInput
                       style={styles.searchInput}
                       placeholder="Rechercher un produit..."
+                      placeholderTextColor={styles.placeholderText.color} // Updated
                       value={filters.searchQuery}
                       onChangeText={(text) =>
                         setFilters({ ...filters, searchQuery: text })
@@ -132,11 +144,19 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     <TouchableOpacity
                       style={[
                         styles.categoryButton,
-                        filters.category === "" && styles.selectedCategory,
+                        filters.category === "" && styles.selectedCategoryButton, // Updated
                       ]}
                       onPress={() => setFilters({ ...filters, category: "" })}
                     >
-                      <Text style={styles.categoryText}>Toutes</Text>
+                      <Text
+                        style={[
+                          styles.categoryText,
+                          filters.category === "" &&
+                            styles.selectedCategoryText, // Updated
+                        ]}
+                      >
+                        Toutes
+                      </Text>
                     </TouchableOpacity>
                     {categories.map((category) => (
                       <TouchableOpacity
@@ -144,13 +164,21 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         style={[
                           styles.categoryButton,
                           filters.category === category.id &&
-                            styles.selectedCategory,
+                            styles.selectedCategoryButton, // Updated
                         ]}
                         onPress={() =>
                           setFilters({ ...filters, category: category.id })
                         }
                       >
-                        <Text style={styles.categoryText}>{category.name}</Text>
+                        <Text
+                          style={[
+                            styles.categoryText,
+                            filters.category === category.id &&
+                              styles.selectedCategoryText, // Updated
+                          ]}
+                        >
+                          {category.name}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -162,6 +190,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     <TextInput
                       style={[styles.input, styles.priceInput]}
                       placeholder="Min"
+                      placeholderTextColor={styles.placeholderText.color} // Updated
                       keyboardType="numeric"
                       value={
                         filters.minPrice !== null
@@ -178,6 +207,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     <TextInput
                       style={[styles.input, styles.priceInput]}
                       placeholder="Max"
+                      placeholderTextColor={styles.placeholderText.color} // Updated
                       keyboardType="numeric"
                       value={
                         filters.maxPrice !== null
@@ -207,8 +237,15 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         onValueChange={(value) =>
                           setFilters({ ...filters, inStock: value })
                         }
-                        trackColor={{ false: "#767577", true: "#FF2A2A" }}
-                        thumbColor={filters.inStock ? "#fff" : "#f4f3f4"}
+                        trackColor={{
+                          false: styles.switchTrack.false, // Updated
+                          true: styles.switchTrack.true, // Updated
+                        }}
+                        thumbColor={
+                          filters.inStock
+                            ? styles.switchThumb.true // Updated
+                            : styles.switchThumb.false // Updated
+                        }
                       />
                     </View>
 
@@ -221,8 +258,15 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         onValueChange={(value) =>
                           setFilters({ ...filters, onSale: value })
                         }
-                        trackColor={{ false: "#767577", true: "#FF2A2A" }}
-                        thumbColor={filters.onSale ? "#fff" : "#f4f3f4"}
+                        trackColor={{
+                          false: styles.switchTrack.false, // Updated
+                          true: styles.switchTrack.true, // Updated
+                        }}
+                        thumbColor={
+                          filters.onSale
+                            ? styles.switchThumb.true // Updated
+                            : styles.switchThumb.false // Updated
+                        }
                       />
                     </View>
 
@@ -233,8 +277,15 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         onValueChange={(value) =>
                           setFilters({ ...filters, freeShipping: value })
                         }
-                        trackColor={{ false: "#767577", true: "#FF2A2A" }}
-                        thumbColor={filters.freeShipping ? "#fff" : "#f4f3f4"}
+                        trackColor={{
+                          false: styles.switchTrack.false, // Updated
+                          true: styles.switchTrack.true, // Updated
+                        }}
+                        thumbColor={
+                          filters.freeShipping
+                            ? styles.switchThumb.true // Updated
+                            : styles.switchThumb.false // Updated
+                        }
                       />
                     </View>
                   </View>
@@ -264,7 +315,11 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                       {option.label}
                     </Text>
                     {filters.sortBy === option.id && (
-                      <Ionicons name="checkmark" size={20} color="#FF2A2A" />
+                      <Ionicons
+                        name="checkmark"
+                        size={20}
+                        color={styles.checkmarkIcon.color} // Updated
+                      />
                     )}
                   </TouchableOpacity>
                 ))}
@@ -286,186 +341,222 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    height: "80%",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    padding: 4,
-  },
-  tabContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#FF2A2A",
-  },
-  tabText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  activeTabText: {
-    color: "#FF2A2A",
-    fontWeight: "600",
-  },
-  filterSection: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 16,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    padding: 10,
-    fontSize: 16,
-  },
-  categoriesContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: -5,
-  },
-  categoryButton: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    margin: 5,
-  },
-  selectedCategory: {
-    backgroundColor: "#FF2A2A",
-    borderColor: "#FF2A2A",
-  },
-  categoryText: {
-    color: "#333",
-  },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  priceInput: {
-    flex: 1,
-  },
-  priceSeparator: {
-    marginHorizontal: 10,
-  },
-  optionsContainer: {
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-    padding: 12,
-  },
-  stockContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  optionText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  sortSection: {
-    marginBottom: 20,
-  },
-  sortOption: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  selectedSortOption: {
-    backgroundColor: "#FFF5F5",
-  },
-  sortOptionText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  selectedSortOptionText: {
-    color: "#FF2A2A",
-    fontWeight: "600",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  resetButton: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    padding: 12,
-    flex: 1,
-    marginRight: 10,
-    alignItems: "center",
-  },
-  resetButtonText: {
-    color: "#333",
-    fontWeight: "600",
-  },
-  applyButton: {
-    backgroundColor: "#FF2A2A",
-    borderRadius: 8,
-    padding: 12,
-    flex: 1,
-    marginLeft: 10,
-    alignItems: "center",
-  },
-  applyButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    centeredView: {
+      flex: 1,
+      justifyContent: "flex-end",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalView: {
+      backgroundColor: theme.colors.background.primary, // Updated
+      borderTopLeftRadius: theme.borderRadius.xl, // Updated
+      borderTopRightRadius: theme.borderRadius.xl, // Updated
+      padding: theme.spacing[5], // Updated
+      height: "80%",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing[4], // Updated
+    },
+    modalTitle: {
+      fontSize: theme.typography.fontSize.xl, // Updated
+      fontWeight: theme.typography.fontWeight.bold, // Updated
+      color: theme.colors.text.primary, // Updated
+    },
+    closeButton: {
+      padding: theme.spacing[1], // Updated
+    },
+    closeIcon: { // Added
+      color: theme.colors.text.primary,
+    },
+    tabContainer: {
+      flexDirection: "row",
+      marginBottom: theme.spacing[5], // Updated
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light, // Updated
+    },
+    tab: {
+      flex: 1,
+      paddingVertical: theme.spacing[3], // Updated
+      alignItems: "center",
+    },
+    activeTab: {
+      borderBottomWidth: 2,
+      borderBottomColor: theme.colors.primary[500], // Updated
+    },
+    tabText: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.secondary, // Updated
+    },
+    activeTabText: {
+      color: theme.colors.primary[500], // Updated
+      fontWeight: theme.typography.fontWeight.semibold, // Updated
+    },
+    filterSection: {
+      marginBottom: theme.spacing[5], // Updated
+    },
+    sectionTitle: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      fontWeight: theme.typography.fontWeight.semibold, // Updated
+      color: theme.colors.text.primary, // Updated
+      marginBottom: theme.spacing[3], // Updated
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.medium, // Updated
+      borderRadius: theme.borderRadius.md, // Updated
+      padding: theme.spacing[3], // Updated
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.primary, // Added
+    },
+    searchInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: theme.colors.border.medium, // Updated
+      borderRadius: theme.borderRadius.md, // Updated
+      paddingHorizontal: theme.spacing[3], // Updated
+    },
+    searchIcon: {
+      marginRight: theme.spacing[2], // Updated
+      color: theme.colors.text.secondary, // Added
+    },
+    searchInput: {
+      flex: 1,
+      paddingVertical: theme.spacing[3], // Updated for consistency with input
+      paddingHorizontal: theme.spacing[1], // Reduced padding as icon has margin
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.primary, // Added
+    },
+    placeholderText: { // Added
+      color: theme.colors.text.placeholder,
+    },
+    categoriesContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      marginHorizontal: -theme.spacing[1], // Updated
+    },
+    categoryButton: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.medium, // Updated
+      borderRadius: theme.borderRadius.full, // Updated
+      paddingVertical: theme.spacing[2], // Updated
+      paddingHorizontal: theme.spacing[3], // Updated
+      margin: theme.spacing[1], // Updated
+    },
+    selectedCategoryButton: { // Renamed from selectedCategory
+      backgroundColor: theme.colors.primary[500], // Updated
+      borderColor: theme.colors.primary[500], // Updated
+    },
+    categoryText: {
+      color: theme.colors.text.primary, // Updated
+      fontSize: theme.typography.fontSize.sm, // Added
+    },
+    selectedCategoryText: { // Added
+      color: theme.colors.text.inverse,
+    },
+    priceContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    priceInput: {
+      flex: 1,
+    },
+    priceSeparator: {
+      marginHorizontal: theme.spacing[2], // Updated
+      color: theme.colors.text.secondary, // Added
+    },
+    optionsContainer: {
+      backgroundColor: theme.colors.background.secondary, // Updated
+      borderRadius: theme.borderRadius.md, // Updated
+      padding: theme.spacing[3], // Updated
+    },
+    stockContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: theme.spacing[2], // Updated
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light, // Updated
+    },
+    optionText: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.primary, // Updated
+    },
+    switchTrack: { // Added
+      false: theme.colors.background.disabled,
+      true: theme.colors.primary[500],
+    },
+    switchThumb: { // Added
+      false: theme.colors.background.card,
+      true: theme.colors.background.card,
+    },
+    sortSection: {
+      marginBottom: theme.spacing[5], // Updated
+    },
+    sortOption: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: theme.spacing[3], // Updated
+      paddingHorizontal: theme.spacing[4], // Updated
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border.light, // Updated
+    },
+    selectedSortOption: {
+      backgroundColor: theme.colors.primary[50], // Updated
+    },
+    sortOptionText: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.primary, // Updated
+    },
+    selectedSortOptionText: {
+      color: theme.colors.primary[500], // Updated
+      fontWeight: theme.typography.fontWeight.semibold, // Updated
+    },
+    checkmarkIcon: { // Added
+        color: theme.colors.primary[500],
+    },
+    buttonsContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: theme.spacing[3], // Updated
+      paddingTop: theme.spacing[3], // Added for separation
+      borderTopWidth: 1, // Added
+      borderTopColor: theme.colors.border.light, // Added
+    },
+    resetButton: {
+      backgroundColor: theme.colors.background.secondary, // Updated
+      borderRadius: theme.borderRadius.md, // Updated
+      paddingVertical: theme.spacing[3], // Updated
+      paddingHorizontal: theme.spacing[4], // Added
+      flex: 1,
+      marginRight: theme.spacing[2], // Updated
+      alignItems: "center",
+    },
+    resetButtonText: {
+      color: theme.colors.text.primary, // Updated
+      fontWeight: theme.typography.fontWeight.semibold, // Updated
+      fontSize: theme.typography.fontSize.base, // Added
+    },
+    applyButton: {
+      backgroundColor: theme.colors.primary[500], // Updated
+      borderRadius: theme.borderRadius.md, // Updated
+      paddingVertical: theme.spacing[3], // Updated
+      paddingHorizontal: theme.spacing[4], // Added
+      flex: 1,
+      marginLeft: theme.spacing[2], // Updated
+      alignItems: "center",
+    },
+    applyButtonText: {
+      color: theme.colors.text.inverse, // Updated
+      fontWeight: theme.typography.fontWeight.semibold, // Updated
+      fontSize: theme.typography.fontSize.base, // Added
+    },
+  });

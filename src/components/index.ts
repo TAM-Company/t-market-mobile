@@ -1,9 +1,9 @@
 // Export des composants réutilisables
-export * from "./Button";
-export * from "./Card";
+export * from "./ui/Button";
+export * from "./ui/Card";
 export * from "./CartItem";
-export * from "./CategoryCard";
+export * from "./ui/CategoryCard";
 export * from "./FilterModal";
-export * from "./Header";
+export * from "./ui/Header";
 export * from "./ProductCard";
 export * from "./SubCategoryList";

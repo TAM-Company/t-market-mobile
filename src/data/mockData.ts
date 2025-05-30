@@ -1,8 +1,18 @@
-// Données fictives pour l'application T-Market
-import { Category, Product, SubCategory } from "../types";
+import { apiService } from '../services/api';
+import { API_ROUTES } from '../config/apiRoutes';
+import {
+  Product,
+  Category,
+  SubCategory,
+  GetProductsResponse,
+  // Assuming simple array responses for these, will define if more structure is needed
+  // GetCategoriesResponse,
+  // GetSubCategoriesResponse,
+} from '../types'; // Ensure all necessary types are imported or defined
 
-// Sous-catégories de produits
-export const subCategories = [
+// --- Core Mock Data Arrays (Keep these as the source of truth for now) ---
+
+const mockSubCategories: SubCategory[] = [
   // Sous-catégories Alimentation
   {
     id: "s23",
@@ -226,8 +236,7 @@ export const subCategories = [
   },
 ];
 
-// Catégories de produits
-export const categories: Category[] = [
+const mockCategories: Category[] = [
   {
     id: "6",
     name: "Alimentation",
@@ -278,32 +287,7 @@ export const categories: Category[] = [
   },
 ];
 
-// Fonctions utilitaires pour les sous-catégories
-export const getSubCategoriesByCategory = (
-  categoryId: string
-): SubCategory[] => {
-  return subCategories.filter((subCat) => subCat.categoryId === categoryId);
-};
-
-export const getSubCategoryById = (
-  subCategoryId: string
-): SubCategory | undefined => {
-  return subCategories.find((subCat) => subCat.id === subCategoryId);
-};
-
-export const getProductsBySubCategory = (subCategoryId: string): Product[] => {
-  const subCategory = getSubCategoryById(subCategoryId);
-  if (!subCategory) return [];
-
-  // Pour l'instant, nous allons simplement retourner tous les produits de la catégorie parente
-  // Dans une vraie application, chaque produit aurait une propriété subCategory
-  return products.filter(
-    (product) => product.category === subCategory.categoryId
-  );
-};
-
-// Produits
-export const products: Product[] = [
+const mockProducts: Product[] = [
   {
     id: "1",
     name: "Smartphone XYZ",
@@ -311,24 +295,28 @@ export const products: Product[] = [
       "Un smartphone puissant avec une excellente caméra et une batterie longue durée.",
     price: 67000,
     stock: 15,
-    category: "1",
+    categoryId: "1", // Corresponds to Électronique
     images: [
       "https://i.notretemps.com/0x450/smart/2023/06/01/samsung-galaxy-a34-5g-1.jpg",
       "https://www.powerplanetonline.com/cdnassets/samsung_galaxy_a05s_plata_01_l.jpg",
       "https://fr.wikomobile.com/shop/media/catalog/product/cache/1/small_image/500x500/9df78eab33525d08d6e5fb8d27136e95/w/i/wiko_power-u10_carbon-grey_3quart-front-01.jpg",
     ],
-    features: [
-      "Écran 6.5 pouces OLED",
-      "Processeur octa-core",
-      "Caméra 48MP",
-      "Batterie 5000mAh",
-      "Mémoire 128GB",
-    ],
-    additionalDetails: [
-      "Garantie 2 ans",
-      "Livraison gratuite",
-      "Disponible en noir, blanc et bleu",
-    ],
+    // Assuming Product type in types.ts might not have these, add if necessary
+    // features: [
+    //   "Écran 6.5 pouces OLED",
+    //   "Processeur octa-core",
+    //   "Caméra 48MP",
+    //   "Batterie 5000mAh",
+    //   "Mémoire 128GB",
+    // ],
+    // additionalDetails: [
+    //   "Garantie 2 ans",
+    //   "Livraison gratuite",
+    //   "Disponible en noir, blanc et bleu",
+    // ],
+    sku: "SKU001",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "2",
@@ -337,23 +325,14 @@ export const products: Product[] = [
       "Ordinateur portable professionnel avec des performances exceptionnelles pour tous vos besoins.",
     price: 85000,
     stock: 8,
-    category: "1",
+    categoryId: "1",
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9JFVnK6NZfkn65xSi3OXt-KeDF5cwkmSqbw&s",
       "https://img.gkbcdn.com/p/2024-07-24/N-one-Nbook-Pro-Dual-Screen-Laptop-10001295-1._w800_p1_.jpg",
     ],
-    features: [
-      "Écran 15.6 pouces 4K",
-      "Processeur Intel i7",
-      "RAM 16GB",
-      "SSD 512GB",
-      "Carte graphique dédiée",
-    ],
-    additionalDetails: [
-      "Garantie 3 ans",
-      "Windows 11 Pro",
-      "Clavier rétroéclairé",
-    ],
+    sku: "SKU002",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "3",
@@ -362,22 +341,14 @@ export const products: Product[] = [
       "T-shirt de haute qualité en coton bio, confortable et durable.",
     price: 25000,
     stock: 50,
-    category: "2",
+    categoryId: "2", // Corresponds to Vêtements
     images: [
       "https://bombaystyle.co.in/cdn/shop/files/photo_2024-07-18_00-14-10.jpg?v=1737639096",
       "https://oase-mode.de/cdn/shop/files/O1CN01DGmENH1DVGMeBoPHk-_1601100221_900x_720x_1e8bd5f9-f15a-4654-82fb-000d7497b29d.jpg?v=1702320900&width=1500",
     ],
-    features: [
-      "100% coton bio",
-      "Coupe régulière",
-      "Col rond",
-      "Lavable en machine",
-    ],
-    additionalDetails: [
-      "Disponible en plusieurs tailles",
-      "Fabriqué en France",
-      "Certifié écologique",
-    ],
+    sku: "SKU003",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "4",
@@ -386,23 +357,15 @@ export const products: Product[] = [
       "Canapé moderne et élégant pour votre salon, alliant confort et style.",
     price: 12000,
     stock: 5,
-    category: "3",
+    categoryId: "3", // Corresponds to Maison
     images: [
       "https://oplayce.ci/cdn/shop/products/WhatsAppImage2023-03-04at17.14.39.jpg?v=1677950988",
       "https://www.cdiscount.com/pdt2/2/9/2/4/700x700/ovo4793565163292/rw/canape-d-angle-revetement-en-tissu-186x136x79-cm-b.jpg",
       "https://media.roche-bobois.com/is/image/rochebobois/sequoia_angle-droit_amb_01-rouge_PP?wid=1250&fmt=pjpeg&resMode=sharp2&qlt=80",
     ],
-    features: [
-      "Tissu premium",
-      "3 places",
-      "Coussins déhoussables",
-      "Pieds en bois massif",
-    ],
-    additionalDetails: [
-      "Livraison et montage inclus",
-      "Garantie 5 ans",
-      "Disponible en gris, bleu et beige",
-    ],
+    sku: "SKU004",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "5",
@@ -411,22 +374,14 @@ export const products: Product[] = [
       "Ballon de football professionnel, idéal pour les matchs et entraînements.",
     price: 32800,
     stock: 30,
-    category: "4",
+    categoryId: "4", // Corresponds to Sports
     images: [
       "https://via.placeholder.com/400?text=Football1",
       "https://via.placeholder.com/400?text=Football2",
     ],
-    features: [
-      "Taille 5",
-      "Matériau synthétique durable",
-      "Coutures renforcées",
-      "Design officiel",
-    ],
-    additionalDetails: [
-      "Utilisé dans les compétitions professionnelles",
-      "Résistant aux intempéries",
-      "Pompe incluse",
-    ],
+    sku: "SKU005",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "6",
@@ -435,22 +390,14 @@ export const products: Product[] = [
       "Crème hydratante pour tous types de peau, enrichie en vitamines et antioxydants.",
     price: 15000,
     stock: 25,
-    category: "5",
+    categoryId: "5", // Corresponds to Beauté
     images: [
       "https://via.placeholder.com/400?text=Creme1",
       "https://via.placeholder.com/400?text=Creme2",
     ],
-    features: [
-      "Hydratation 24h",
-      "Sans parabènes",
-      "Formule non grasse",
-      "Testée dermatologiquement",
-    ],
-    additionalDetails: [
-      "Convient aux peaux sensibles",
-      "Ingrédients naturels",
-      "Non testée sur les animaux",
-    ],
+    sku: "SKU006",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "7",
@@ -459,22 +406,14 @@ export const products: Product[] = [
       "Écouteurs sans fil avec une qualité sonore exceptionnelle et une longue autonomie.",
     price: 85000,
     stock: 12,
-    category: "1",
+    categoryId: "1",
     images: [
       "https://via.placeholder.com/400?text=Ecouteurs1",
       "https://via.placeholder.com/400?text=Ecouteurs2",
     ],
-    features: [
-      "Bluetooth 5.0",
-      "Autonomie 8h",
-      "Résistants à l'eau IPX5",
-      "Réduction de bruit active",
-    ],
-    additionalDetails: [
-      "Étui de chargement inclus",
-      "Garantie 1 an",
-      "Disponible en noir et blanc",
-    ],
+    sku: "SKU007",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "8",
@@ -483,37 +422,210 @@ export const products: Product[] = [
       "Veste en cuir véritable, élégante et durable pour homme et femme.",
     price: 19800,
     stock: 7,
-    category: "2",
+    categoryId: "2",
     images: [
       "https://via.placeholder.com/400?text=Veste1",
       "https://via.placeholder.com/400?text=Veste2",
     ],
-    features: [
-      "Cuir véritable",
-      "Doublure en polyester",
-      "Fermeture éclair YKK",
-      "Poches multiples",
-    ],
-    additionalDetails: [
-      "Disponible en noir et marron",
-      "Tailles XS à XXL",
-      "Entretien facile",
-    ],
+    sku: "SKU008",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
-// Fonction pour obtenir les produits par catégorie
-export const getProductsByCategory = (categoryId: string): Product[] => {
-  return products.filter((product) => product.category === categoryId);
+
+// --- Refactored Data Fetching Functions ---
+
+const SIMULATED_DELAY = 500; // ms
+
+// Helper to simulate filtering and pagination
+const applyFiltersAndPagination = (
+  items: any[],
+  params?: {
+    page?: number;
+    limit?: number;
+    categoryId?: string;
+    subCategoryId?: string;
+    searchQuery?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: boolean;
+    sortBy?: string;
+    onSale?: boolean;
+    freeShipping?: boolean;
+    // Add other potential filter params here
+  }
+) => {
+  let filteredItems = [...items];
+
+  if (params?.searchQuery) {
+    filteredItems = filteredItems.filter(
+      (item) =>
+        item.name.toLowerCase().includes(params.searchQuery!.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(params.searchQuery!.toLowerCase()))
+    );
+  }
+  if (params?.categoryId) {
+    filteredItems = filteredItems.filter((item) => item.categoryId === params.categoryId);
+  }
+  if (params?.subCategoryId && items === mockProducts) { // Example: products might not have subCategoryId directly
+     const subCat = mockSubCategories.find(sc => sc.id === params.subCategoryId);
+     if (subCat) {
+        filteredItems = filteredItems.filter(p => p.categoryId === subCat.categoryId);
+     } else {
+        filteredItems = []; // No products if subcategory doesn't exist
+     }
+  }
+  if (params?.minPrice !== undefined) {
+    filteredItems = filteredItems.filter((item) => item.price >= params.minPrice!);
+  }
+  if (params?.maxPrice !== undefined) {
+    filteredItems = filteredItems.filter((item) => item.price <= params.maxPrice!);
+  }
+  if (params?.inStock) {
+    filteredItems = filteredItems.filter((item) => item.stock > 0);
+  }
+  // Add onSale, freeShipping if product data includes these flags or can be derived
+
+  // Sorting (simplified example, adapt from original filterProducts if needed)
+  if (params?.sortBy) {
+    filteredItems.sort((a, b) => {
+      switch (params.sortBy) {
+        case "price-asc": return a.price - b.price;
+        case "price-desc": return b.price - a.price;
+        case "name-asc": return a.name.localeCompare(b.name);
+        case "name-desc": return b.name.localeCompare(a.name);
+        default: return 0;
+      }
+    });
+  }
+
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const total = filteredItems.length;
+  const paginatedData = filteredItems.slice((page - 1) * limit, page * limit);
+
+  return { data: paginatedData, total, page, limit };
 };
 
-// Fonction pour obtenir un produit par ID
-export const getProductById = (productId: string): Product | undefined => {
-  return products.find((product) => product.id === productId);
+
+export const getProducts = async (
+  params?: {
+    page?: number;
+    limit?: number;
+    categoryId?: string;
+    subCategoryId?: string;
+    searchQuery?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: boolean;
+    sortBy?: string;
+    onSale?: boolean;
+    freeShipping?: boolean;
+  }
+): Promise<GetProductsResponse> => {
+  // Here we simulate calling apiService.get(API_ROUTES.PRODUCTS, params)
+  // The actual fetch is replaced by a promise that resolves with mock data
+  console.log(`Simulating API call to: ${API_ROUTES.PRODUCTS} with params:`, params);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const { data, total, page, limit } = applyFiltersAndPagination(mockProducts, params);
+      resolve({
+        products: data,
+        total,
+        page,
+        limit,
+      });
+    }, SIMULATED_DELAY);
+  });
 };
 
-// Fonction pour filtrer les produits
-export const filterProducts = (
+export const getProductById = async (productId: string): Promise<Product | undefined> => {
+  // Simulating apiService.get(API_ROUTES.PRODUCT_DETAIL(productId))
+  console.log(`Simulating API call to: ${API_ROUTES.PRODUCT_DETAIL(productId)}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const product = mockProducts.find((p) => p.id === productId);
+      resolve(product);
+    }, SIMULATED_DELAY);
+  });
+};
+
+export const getCategories = async (
+  // Add params if categories can be filtered/paginated
+): Promise<Category[]> => {
+  // Simulating apiService.get(API_ROUTES.CATEGORIES)
+  console.log(`Simulating API call to: ${API_ROUTES.CATEGORIES}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([...mockCategories]); // Return a copy
+    }, SIMULATED_DELAY);
+  });
+};
+
+export const getCategoryById = async (categoryId: string): Promise<Category | undefined> => {
+  // Simulating apiService.get(API_ROUTES.CATEGORY_DETAIL(categoryId))
+  console.log(`Simulating API call to: ${API_ROUTES.CATEGORY_DETAIL(categoryId)}`);
+   return new Promise((resolve) => {
+    setTimeout(() => {
+      const category = mockCategories.find((c) => c.id === categoryId);
+      resolve(category);
+    }, SIMULATED_DELAY);
+  });
+};
+
+
+export const getSubCategories = async (
+    params?: { categoryId?: string }
+): Promise<SubCategory[]> => {
+    // Simulating apiService.get(API_ROUTES.SOME_SUBROUTE_FOR_SUBCATEGORIES, params)
+    // Assuming API_ROUTES would have a route for subcategories, e.g., /subcategories or /categories/:id/subcategories
+    let route = "/subcategories"; // Placeholder if no specific route in API_ROUTES
+    if (params?.categoryId) {
+        // This assumes your API_ROUTES.PRODUCTS_BY_CATEGORY or similar might be relevant,
+        // or you'd have a dedicated subcategory route.
+        // For mock, we just use the param.
+        route = `/categories/${params.categoryId}/subcategories`; // Example simulated route
+    }
+    console.log(`Simulating API call to fetch subcategories with params:`, params);
+
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            let filteredSubCategories = [...mockSubCategories];
+            if (params?.categoryId) {
+                filteredSubCategories = filteredSubCategories.filter(
+                    (sc) => sc.categoryId === params.categoryId
+                );
+            }
+            resolve(filteredSubCategories);
+        }, SIMULATED_DELAY);
+    });
+};
+
+
+export const getSubCategoryById = async (subCategoryId: string): Promise<SubCategory | undefined> => {
+  // Simulating an API call, e.g. apiService.get(`/subcategories/${subCategoryId}`)
+  // API_ROUTES should define this if it's a common pattern.
+  console.log(`Simulating API call to fetch subcategory by ID: ${subCategoryId}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const subCategory = mockSubCategories.find((sc) => sc.id === subCategoryId);
+      resolve(subCategory);
+    }, SIMULATED_DELAY);
+  });
+};
+
+
+// --- Potentially keep some synchronous utility functions if they are used for client-side logic ---
+// --- For example, if filterProducts is used by UI components AFTER fetching all products. ---
+// --- However, the goal is to make data *fetching* functions asynchronous. ---
+
+// The original filterProducts function might still be useful if you fetch a larger dataset
+// and then allow client-side refinement. Or, its logic can be fully embedded into
+// the new getProducts's applyFiltersAndPagination helper.
+// For this refactor, we'll assume most filtering happens "server-side" (i.e., within the getProducts Promise).
+
+export const filterProductsClientSide = ( // Renamed to clarify its scope
   productList: Product[],
   searchQuery: string = "",
   categoryId: string = "",
@@ -521,72 +633,86 @@ export const filterProducts = (
   maxPrice: number | null = null,
   inStock: boolean = false,
   sortBy: string = "default",
-  onSale: boolean = false,
-  freeShipping: boolean = false
+  onSale: boolean = false, // Assuming Product type has an onSale property or it's derived
+  freeShipping: boolean = false // Assuming Product type has a freeShipping property or it's derived
 ): Product[] => {
-  // Filtrer les produits
-  let filtered = productList.filter((product) => {
-    // Filtre par recherche
-    const matchesSearch =
-      searchQuery === "" ||
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+  let filtered = [...productList];
 
-    // Filtre par catégorie
-    const matchesCategory =
-      categoryId === "" || product.category === categoryId;
-
-    // Filtre par prix minimum
-    const matchesMinPrice = minPrice === null || product.price >= minPrice;
-
-    // Filtre par prix maximum
-    const matchesMaxPrice = maxPrice === null || product.price <= maxPrice;
-
-    // Filtre par stock
-    const matchesStock = !inStock || product.stock > 0;
-
-    // Filtre par promotion (simulation)
-    const matchesOnSale =
-      !onSale || product.id === "3" || product.id === "6" || product.id === "8";
-
-    // Filtre par livraison gratuite (simulation)
-    const matchesFreeShipping =
-      !freeShipping ||
-      product.additionalDetails.some((detail) =>
-        detail.toLowerCase().includes("livraison gratuite")
-      );
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesMinPrice &&
-      matchesMaxPrice &&
-      matchesStock &&
-      matchesOnSale &&
-      matchesFreeShipping
+  if (searchQuery) {
+    filtered = filtered.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  });
+  }
+  if (categoryId) {
+    filtered = filtered.filter((product) => product.categoryId === categoryId);
+  }
+  if (minPrice !== null) {
+    filtered = filtered.filter((product) => product.price >= minPrice);
+  }
+  if (maxPrice !== null) {
+    filtered = filtered.filter((product) => product.price <= maxPrice);
+  }
+  if (inStock) {
+    filtered = filtered.filter((product) => product.stock > 0);
+  }
+  // Add onSale and freeShipping filters if applicable to Product type
 
-  // Trier les produits
   if (sortBy !== "default") {
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case "price-asc":
-          return a.price - b.price;
-        case "price-desc":
-          return b.price - a.price;
-        case "name-asc":
-          return a.name.localeCompare(b.name);
-        case "name-desc":
-          return b.name.localeCompare(a.name);
-        case "newest":
-          // Simulation: utiliser l'ID comme indicateur de nouveauté
-          return parseInt(b.id) - parseInt(a.id);
-        default:
-          return 0;
+        case "price-asc": return a.price - b.price;
+        case "price-desc": return b.price - a.price;
+        case "name-asc": return a.name.localeCompare(b.name);
+        case "name-desc": return b.name.localeCompare(a.name);
+        // case "newest": // Requires a date field on Product
+        //   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        default: return 0;
       }
     });
   }
-
   return filtered;
 };
+
+// Note: The original getProductsByCategory and getProductsBySubCategory are now effectively
+// covered by getProducts({ categoryId: '...' }) and getProducts({ subCategoryId: '...' })
+// respectively, by passing parameters to the main getProducts function.
+// If direct, simpler functions are still desired, they can be kept:
+
+export const getProductsByCategory = async (categoryId: string): Promise<Product[]> => {
+  console.log(`Simulating API call for products by category: ${categoryId}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const products = mockProducts.filter(p => p.categoryId === categoryId);
+      resolve(products); // This is a simplified return, not paginated. Adjust if needed.
+    }, SIMULATED_DELAY);
+  });
+};
+
+export const getProductsBySubCategory = async (subCategoryId: string): Promise<Product[]> => {
+  console.log(`Simulating API call for products by subCategory: ${subCategoryId}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const subCategory = mockSubCategories.find(sc => sc.id === subCategoryId);
+      if (subCategory) {
+        const products = mockProducts.filter(p => p.categoryId === subCategory.categoryId);
+        resolve(products); // Simplified return
+      } else {
+        resolve([]);
+      }
+    }, SIMULATED_DELAY);
+  });
+};
+
+// The Product type in `src/types/index.ts` or `src/types/api.ts` should be the single source of truth.
+// Ensure mockProducts align with the Product definition in `src/types/api.ts`.
+// This means fields like `sku`, `createdAt`, `updatedAt` should be added to mockProducts.
+// The `features` and `additionalDetails` fields were present in the original mock but not in `src/types/api.ts Product`.
+// For this refactor, I've commented them out from mockProducts to align with the defined Product type.
+// If they are needed, the Product type in `src/types/api.ts` should be updated.
+// I've added sku, createdAt, updatedAt to the mockProducts.
+// I've also assumed that the Product type in `src/types/index.ts` is compatible or the same as `src/types/api.ts`.
+// If they differ, `src/types/index.ts` might need updates or this file should strictly use types from `src/types/api.ts`.
+// For now, I'm using `Product` from `../types` which implies `src/types/index.ts`.
+// It's better to ensure consistency, e.g., by having `src/types/index.ts` export from `src/types/api.ts` or vice-versa for shared types.

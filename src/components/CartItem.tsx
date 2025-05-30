@@ -1,6 +1,8 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CartItem as CartItemType } from "../types";
+import { useThemedStyles } from "../context/ThemeContext";
+import { Theme } from "../design/theme";
 
 interface CartItemProps {
   item: CartItemType;
@@ -15,6 +17,7 @@ export const CartItem: React.FC<CartItemProps> = ({
   onDecrement,
   onRemove,
 }) => {
+  const styles = useThemedStyles(createStyles);
   const { product, quantity } = item;
   const subtotal = product.price * quantity;
 
@@ -58,81 +61,85 @@ export const CartItem: React.FC<CartItemProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    overflow: "hidden",
-    marginBottom: 16,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-  },
-  infoContainer: {
-    flex: 1,
-    marginLeft: 12,
-    justifyContent: "space-between",
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  price: {
-    fontSize: 14,
-    color: "#666",
-  },
-  quantityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  quantityButton: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 4,
-    width: 28,
-    height: 28,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  quantityButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  quantity: {
-    fontSize: 16,
-    marginHorizontal: 12,
-  },
-  rightContainer: {
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  removeButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  removeButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#666",
-  },
-  subtotal: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FF2A2A",
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.background.card, // Updated
+      borderRadius: theme.borderRadius.lg, // Updated
+      overflow: "hidden",
+      marginBottom: theme.spacing[4], // Updated
+      padding: theme.spacing[3], // Updated
+      shadowColor: theme.colors.shadow.default, // Updated
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    image: {
+      width: 80,
+      height: 80,
+      borderRadius: theme.borderRadius.md, // Updated
+      backgroundColor: theme.colors.background.secondary, // Updated
+    },
+    infoContainer: {
+      flex: 1,
+      marginLeft: theme.spacing[3], // Updated
+      justifyContent: "space-between",
+    },
+    name: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      fontWeight: theme.typography.fontWeight.medium, // Updated
+      color: theme.colors.text.primary, // Updated
+      marginBottom: theme.spacing[1], // Updated
+    },
+    price: {
+      fontSize: theme.typography.fontSize.sm, // Updated
+      color: theme.colors.text.secondary, // Updated
+    },
+    quantityContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: theme.spacing[2], // Updated
+    },
+    quantityButton: {
+      backgroundColor: theme.colors.background.secondary, // Updated
+      borderRadius: theme.borderRadius.sm, // Updated
+      width: 28,
+      height: 28,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    quantityButtonText: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      fontWeight: theme.typography.fontWeight.bold, // Updated
+      color: theme.colors.text.primary, // Updated
+    },
+    quantity: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      color: theme.colors.text.primary, // Updated
+      marginHorizontal: theme.spacing[3], // Updated
+    },
+    rightContainer: {
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+    },
+    removeButton: {
+      width: 24,
+      height: 24,
+      borderRadius: theme.borderRadius.full, // Updated
+      backgroundColor: theme.colors.background.secondary, // Updated
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    removeButtonText: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      fontWeight: theme.typography.fontWeight.bold, // Updated
+      color: theme.colors.text.secondary, // Updated
+    },
+    subtotal: {
+      fontSize: theme.typography.fontSize.base, // Updated
+      fontWeight: theme.typography.fontWeight.bold, // Updated
+      color: theme.colors.primary[500], // Updated
+    },
+  });

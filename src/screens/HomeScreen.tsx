@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
-import { CategoryCarousel } from "../components/category/CategoryCard";
+import { CategoryCarousel } from "../components/ui/CategoryCard";
 import { LayoutWithHeader } from "../components/layout/Layout";
-import { ProductCard, ProductGrid } from "../components/product/ProductCard";
+import { ProductCard, ProductGrid } from "../components/ui/ProductCard";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { SearchBar } from "../components/ui/SearchBar";

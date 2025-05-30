@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAppNavigation } from "../hooks/useNavigation";
 import { Category } from "../types";
 
 interface CategoryCardProps {
@@ -8,10 +8,10 @@ interface CategoryCardProps {
 }
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
-  const router = useRouter();
+  const { navigateToCategory } = useAppNavigation();
 
   const handlePress = () => {
-    router.push(`/category/${category.id}`);
+    navigateToCategory(category.id);
   };
 
   return (

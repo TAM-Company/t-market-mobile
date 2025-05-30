@@ -2,7 +2,7 @@
 import { Category, Product, SubCategory } from "../types";
 
 // Sous-catégories de produits
-export const subCategories: SubCategory[] = [
+export const subCategories = [
   // Sous-catégories Alimentation
   {
     id: "s23",

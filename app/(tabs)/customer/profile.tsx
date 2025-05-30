@@ -11,8 +11,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Card } from "../../src/components/Card";
-import { Header } from "../../src/components/Header";
+import { Card } from "../../../src/components/Card";
+import { Header } from "../../../src/components/Header";
 
 interface UserAddress {
   id: string;

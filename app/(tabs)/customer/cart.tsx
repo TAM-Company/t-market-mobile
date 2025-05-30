@@ -1,3 +1,7 @@
+import { Button } from "@/src/components/Button";
+import { CartItem as CartItemComponent } from "@/src/components/CartItem";
+import { Header } from "@/src/components/Header";
+import { useCart } from "@/src/context/CartContext";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -9,10 +13,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "../../src/components/Button";
-import { CartItem as CartItemComponent } from "../../src/components/CartItem";
-import { Header } from "../../src/components/Header";
-import { useCart } from "../../src/context/CartContext";
 
 export default function CartScreen() {
   const router = useRouter();

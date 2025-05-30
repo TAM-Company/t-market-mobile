@@ -1,13 +1,13 @@
+import { CategoryCard } from "@/src/components/CategoryCard";
+import { Header } from "@/src/components/Header";
+import { SubCategoryList } from "@/src/components/SubCategoryList";
+import { categories, subCategories } from "@/src/data/mockData";
+import { SubCategory } from "@/src/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CategoryCard } from "../../src/components/CategoryCard";
-import { Header } from "../../src/components/Header";
-import { SubCategoryList } from "../../src/components/SubCategoryList";
-import { categories, subCategories } from "../../src/data/mockData";
-import { SubCategory } from "../../src/types";
 
 export default function CategoriesScreen() {
   const router = useRouter();

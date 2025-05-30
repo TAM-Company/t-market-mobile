@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAppNavigation } from "../hooks/useNavigation";
 
 interface HeaderProps {
   title: string;
@@ -16,14 +16,14 @@ export const Header: React.FC<HeaderProps> = ({
   showCartButton = false,
   rightComponent,
 }) => {
-  const router = useRouter();
+  const { goBack, navigateToCart } = useAppNavigation();
 
   const handleBackPress = () => {
-    router.back();
+    goBack();
   };
 
   const handleCartPress = () => {
-    router.push("/cart");
+    navigateToCart();
   };
 
   return (

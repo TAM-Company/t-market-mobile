@@ -1,3 +1,8 @@
+import { FilterModal } from "@/src/components/FilterModal";
+import { ProductCard } from "@/src/components/ProductCard";
+import { useCart } from "@/src/context/CartContext";
+import { filterProducts, products } from "@/src/data/mockData";
+import { FilterOptions, Product } from "@/src/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -9,11 +14,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FilterModal } from "../../src/components/FilterModal";
-import { ProductCard } from "../../src/components/ProductCard";
-import { useCart } from "../../src/context/CartContext";
-import { filterProducts, products } from "../../src/data/mockData";
-import { FilterOptions, Product } from "../../src/types";
 
 export default function ProductsScreen() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
